@@ -1,0 +1,59 @@
+@extends('layouts.app')
+
+@section('title', 'All Orders — Admin')
+
+@section('content')
+<div class="page-header">
+    <h1>All Orders</h1>
+</div>
+
+@if(count($orders) > 0)
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($orders as $order)
+            <tr>
+                <td>#{{ $order->order_id }}</td>
+                <td>{{ $order->customer_name }}</td>
+                <td>{{ $order->order_date }}</td>
+                <td>{{ $order->item_count }}</td>
+                <td class="price price-sm">৳{{ number_format($order->total, 2) }}</td>
+                <td>
+                    @php
+                        $statusBadge = match($order->status) {
+                            'pending'   => 'badge-warning',
+                            'paid'      => 'badge-info',
+                            'shipped'   => 'badge-primary',
+                            'delivered' => 'badge-success',
+                            'cancelled' => 'badge-danger',
+                            default     => 'badge-info',
+                        };
+                    @endphp
+                    <span class="badge {{ $statusBadge }}">{{ ucfirst($order->status) }}</span>
+                </td>
+                <td>
+                    <a href="/orders/{{ $order->order_id }}" class="btn btn-secondary btn-sm">View</a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@else
+<div class="empty-state">
+    <h3>No orders yet</h3>
+    <p>Orders will appear here as customers place them.</p>
+</div>
+@endif
+@endsection
